@@ -2,6 +2,7 @@ import pygame
 import os, sys
 from map import Map
 from enemy import Enemy
+from gameobject import GameObject
 
 os.chdir(os.getcwd() + "\\Scripts")
 
@@ -10,12 +11,7 @@ movePath = []
 playerX = 0
 playerY = 0
 
-class GameObject():
-    def __init__(self, image, startPos):
-        self.image = image
-        self.pos = startPos
-
-    def move(self, position):
+def move(self, position):
         self.pos = position
 
 def getMovePath():
@@ -92,17 +88,19 @@ map = Map(12,12,32, tileSet)
 setupMap(map)
 
 player = GameObject(pygame.image.load('..\\Art\\WhiteBoon.png').convert(), (playerX, playerY))
-enemy = Enemy(1,getMovePath())
+enemy = Enemy(1,getMovePath(), pygame.image.load('..\\Art\\RedBoon.png').convert(), 1)
+enemy2 = Enemy(1,getMovePath(), pygame.image.load('..\\Art\\BlueBoon.png').convert(), 10)
 
 gameObjects.append(player)
 gameObjects.append(enemy)
+gameObjects.append(enemy2)
 
 pygame.display.set_caption("Boons")
 
-#loadBackground('..\\Art\\RedBoon.png',32, 384,384)
-
 #Game Settings
 clockRate = pygame.time.Clock()
+enemyUpdateTime = 2
+currentEnemyUpdateCount = 0
 done = False
 loadMap(map)
 
@@ -129,6 +127,12 @@ while not done:
     player.move((playerX, playerY))
     redrawGameobjects(gameObjects)
 
+    if(currentEnemyUpdateCount > enemyUpdateTime):
+        enemy.move()
+        enemy2.move()
+        currentEnemyUpdateCount = 0
+
+    currentEnemyUpdateCount += 1
     pygame.display.update()
     pygame.time.delay(100)
     screen.fill((0,0,0))
